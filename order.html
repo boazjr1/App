@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Place Order - Yorie Patisserie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff0f5;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #d63384;
+    }
+
+    form {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #d63384;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Order Your Cake 🎂</h2>
+
+<form id="orderForm">
+  <input type="text" id="name" placeholder="Your Name" required>
+  <input type="tel" id="phone" placeholder="Phone Number" required>
+
+  <select id="cakeType" required>
+    <option value="">Select Cake Type</option>
+    <option>Birthday Cake</option>
+    <option>Wedding Cake</option>
+    <option>Anniversary Cake</option>
+    <option>Custom Cake</option>
+  </select>
+
+  <select id="size" required>
+    <option value="">Select Size</option>
+    <option>Small</option>
+    <option>Medium</option>
+    <option>Large</option>
+  </select>
+
+  <select id="flavor" required>
+    <option value="">Select Flavor</option>
+    <option>Chocolate</option>
+    <option>Vanilla</option>
+    <option>Red Velvet</option>
+    <option>Strawberry</option>
+  </select>
+
+  <input type="date" id="date" required>
+  <textarea id="notes" placeholder="Extra instructions"></textarea>
+
+  <button type="submit">Submit Order</button>
+</form>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } 
+from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCNNIZfL6O0o8yyg7SO8DjYy3WUjT5zJVE",
+  authDomain: "yorie-patisserie.firebaseapp.com",
+  projectId: "yorie-patisserie",
+  storageBucket: "yorie-patisserie.firebasestorage.app",
+  messagingSenderId: "752232220634",
+  appId: "1:752232220634:web:977c2299355177f547a2e3"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const form = document.getElementById("orderForm");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const cakeType = document.getElementById("cakeType").value;
+  const size = document.getElementById("size").value;
+  const flavor = document.getElementById("flavor").value;
+  const date = document.getElementById("date").value;
+  const notes = document.getElementById("notes").value;
+
+  try {
+    await addDoc(collection(db, "orders"), {
+      name,
+      phone,
+      cakeType,
+      size,
+      flavor,
+      date,
+      notes,
+      status: "pending",
+      createdAt: serverTimestamp()
+    });
+
+    alert("Order sent successfully! We will contact you soon 💖");
+    form.reset();
+
+  } catch (error) {
+    alert("Error sending order. Please try again.");
+    console.error(error);
+  }
+});
+</script>
+
+</body>
+</html>
